@@ -3,9 +3,14 @@ const router = express.Router();
 
 const { Posts } = require('../models');
 
-router.get('/', async (req, res) => {
-  const posts = await Posts.findAll();
-  res.json(posts);
+router.get('/', async (req, res) =>
+{
+  try {
+    const posts = await Posts.findAll();
+    res.json(posts);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get('/:id', async (req, res) => {

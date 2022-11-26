@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Posts.associte = (models) => {
     Posts.hasMany(models.Comments, {
-      onDelete: 'cascade',
+      onDelete: 'cascade'
     });
   };
 
