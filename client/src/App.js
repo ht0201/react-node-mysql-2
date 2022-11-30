@@ -11,15 +11,26 @@ import axios from "axios";
 
 function App()
 {
-  const [authState, setAuthState] = useState(false);
+  const [authState, setAuthState] = useState({
+    username: '',
+    id: 0,
+    status: false
+  });
 
   useEffect(() => {
-    axios.get('http://localhost:7000/auth/auth', { headers: { accessToken: localStorage.getItem('accessToken') } } ).then(res =>
+    axios.get('http://localhost:7000/auth/auth', { headers: { accessToken: localStorage.getItem('accessToken')} } ).then(res =>
       {
         if (res.data.error) {
-         setAuthState(false)
+          setAuthState({
+            ...authState,
+            status: false
+         })
         } else {
-         setAuthState(true)
+          setAuthState({
+            username: res.data.username,
+            id: res.data.id,
+            status: true
+         })
         }
       }).catch(error => {
         console.log(error); 
@@ -29,7 +40,7 @@ function App()
   const onLogout = () =>
   {
     localStorage.removeItem('accessToken')
-    setAuthState(false)
+    setAuthState({...authState, status: false})
   }
 
   return (
@@ -39,15 +50,15 @@ function App()
           <div className='navbar'>
             <Link to='/'> Home Page</Link>
             <Link to='/createpost'> Create A Post</Link>
-            {authState ?
-              <Link to='/' onClick={onLogout}> Log out</Link>
+            {authState.status ?
+              <button onClick={onLogout}> Log out</button>
               :
               <>
                 <Link to='/registration'> Register</Link>
                 <Link to='/login'> Login</Link>
               </>
             }
-           
+            {authState.status && <h3>{ authState.username }</h3>}
           </div>
           <Routes>
             <Route path='/' element={<Home />} />

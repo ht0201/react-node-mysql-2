@@ -18,8 +18,23 @@ router.get('/:postId', async (req, res) => {
 router.post('/', validateToken, async (req, res) => {
   const comment = req.body;
   comment.username = req.user.username
-  await Comments.create(comment);
-  res.json(comment);
+  const newComment = await Comments.create(comment);
+  res.json(newComment);
 });
+
+router.delete('/:commentId', validateToken, async (req, res) =>
+{
+  const commentId = req.params.commentId;
+  console.log(commentId);
+
+  await Comments.destroy({
+    where: {
+      id: commentId
+    }
+  });
+
+  res.json('DELETED SUCCESSFULLY')
+})
+
 
 module.exports = router;

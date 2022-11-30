@@ -23,8 +23,12 @@ const Login = () => {
           alert(res.data.error)
         } else
         {
-          localStorage.setItem('accessToken', res.data.accessToken);
-          setAuthState(true);
+          localStorage.setItem('accessToken', res.data.token);
+          setAuthState({
+            username: res.data.username,
+            id: res.data.id,
+            status: true
+          });
           navigate("/");
         }
       })

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../helpers/AuthContext";
 
 const Post = () => {
   const { id } = useParams();
   const [post, setPost] = useState({});
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const {authState} = useContext(AuthContext);
 
   useEffect(() => {
     axios.get(`http://localhost:7000/posts/${id}`).then((res) => {
@@ -28,18 +30,33 @@ const Post = () => {
     {
       if (res.data.error)
       {
-        console.log(res.data.error);
         alert(res.data.error)
       } else
       {
-        console.log(res.data);
-        dataComment.username = res.data.username;
-        setComments([...comments, dataComment]);
+        const commentToAdd = {
+          username: res.data.username,
+          commentBody: res.data.commentBody,
+          id: res.data.id
+        }
+        setComments([...comments, commentToAdd]);
         setNewComment("");
       }
     
     });
   };
+
+  const onDeleteComment = (commentId) =>
+  {
+    axios.delete(`http://localhost:7000/comments/${ commentId }`, { headers: { accessToken: localStorage.getItem('accessToken') } }).then(() =>
+    {
+      setComments(
+          comments.filter((val) => {
+            return val.id != commentId;
+          })
+        );
+    })
+   
+  }
 
   if (!post) return;
   if (!comments) return;
@@ -67,10 +84,11 @@ const Post = () => {
         </div>
 
         <div className="listOfComments">
-          {comments.map((comment, index) => {
+          {comments.map((comment) => {
             return (
-              <div key={index} className="comment">
-                {comment.commentBody} {`Username: ${comment.username}`}
+              <div key={comment.id} className="comment">
+                {comment.commentBody} {`Username: ${ comment.username }`} {comment.id}
+                {authState.username === comment.username && <button onClick={()=> onDeleteComment(comment.id)}> X</button>}
               </div>
             );
           })}
