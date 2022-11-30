@@ -20,9 +20,24 @@ const Post = () => {
 
   const addComment = () => {
     const dataComment = { commentBody: newComment, postId: id };
-    axios.post(`http://localhost:7000/comments`, dataComment).then((res) => {
-      setComments([...comments, dataComment]);
-      setNewComment("");
+    axios.post(`http://localhost:7000/comments`, dataComment, {
+      headers: {
+        accessToken: localStorage.getItem('accessToken')
+      }
+    }).then((res) =>
+    {
+      if (res.data.error)
+      {
+        console.log(res.data.error);
+        alert(res.data.error)
+      } else
+      {
+        console.log(res.data);
+        dataComment.username = res.data.username;
+        setComments([...comments, dataComment]);
+        setNewComment("");
+      }
+    
     });
   };
 
@@ -55,7 +70,7 @@ const Post = () => {
           {comments.map((comment, index) => {
             return (
               <div key={index} className="comment">
-                {comment.commentBody}
+                {comment.commentBody} {`Username: ${comment.username}`}
               </div>
             );
           })}

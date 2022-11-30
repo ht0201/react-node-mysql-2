@@ -1,8 +1,9 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { AuthContext } from "../helpers/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,12 +11,22 @@ const Login = () => {
     username: "",
     password: "",
   };
+  const { setAuthState } = useContext(AuthContext);
 
-  const onSubmit = (data) => {
+  const onLogin = (data) => {
     axios
       .post("http://localhost:7000/auth/login", data)
-      .then((res) => {
-        navigate("/");
+      .then((res) =>
+      {
+        if (res.data.error)
+        {
+          alert(res.data.error)
+        } else
+        {
+          localStorage.setItem('accessToken', res.data.accessToken);
+          setAuthState(true);
+          navigate("/");
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -31,7 +42,7 @@ const Login = () => {
     <div className="createPostPage">
       <Formik
         initialValues={initialValues}
-        onSubmit={onSubmit}
+        onSubmit={onLogin}
         validationSchema={validationSchema}
       >
         <Form className="formContainer">
