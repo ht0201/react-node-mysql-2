@@ -14,10 +14,16 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  Posts.associte = (models) => {
+  Posts.associate = (models) => {
     Posts.hasMany(models.Comments, {
       onDelete: 'cascade'
     });
+
+    Posts.hasMany(models.Likes, {
+      onDelete: 'cascade'
+    })
+
+    // Posts.belongsTo(models.Users)
   };
 
   return Posts;

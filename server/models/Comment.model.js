@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  Comments.associate = (models) => {
-    Comments.belongsTo(models.Posts, {
-      foreignKey: 'postId',
-    });
-  };
+  // Comments.associate = (models) => {
+  //   Comments.belongsTo(models.Posts, {
+  //     foreignKey: 'postId',
+  //   });
+  // };
 
   return Comments;
 };
